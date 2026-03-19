@@ -1,4 +1,5 @@
 import { Activity, Clock } from "lucide-react";
+import SocialShareButtons from "@/components/shared/SocialShareButtons";
 
 interface MatchCardProps {
   league: string;
@@ -29,7 +30,6 @@ export default function MatchCard({ league, home, away, homeScore, awayScore, mi
         )}
       </div>
 
-      {/* Score */}
       <div className="flex items-center justify-between py-2">
         <div className="flex-1">
           <p className={`text-sm font-bold ${homeScore > awayScore ? "text-foreground" : "text-muted-foreground"}`}>{home}</p>
@@ -44,7 +44,6 @@ export default function MatchCard({ league, home, away, homeScore, awayScore, mi
         </div>
       </div>
 
-      {/* Stats */}
       {stats && (
         <div className="mt-3 space-y-2 border-t border-border pt-3">
           <StatBar label="Possession" left={stats.possession[0]} right={stats.possession[1]} unit="%" />
@@ -52,6 +51,10 @@ export default function MatchCard({ league, home, away, homeScore, awayScore, mi
           <StatBar label="Corners" left={stats.corners[0]} right={stats.corners[1]} />
         </div>
       )}
+
+      <div className="mt-3 border-t border-border pt-3">
+        <SocialShareButtons title={`${home} ${homeScore} - ${awayScore} ${away}`} />
+      </div>
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import NewsCard from "@/components/modules/news/NewsCard";
 import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
+import NativeAdSlot from "@/components/shared/NativeAdSlot";
+import GlobalAlertSignup from "@/components/shared/GlobalAlertSignup";
 
 const ALL_NEWS = [
   { title: "Mbappé Scores Hat-trick in El Clásico Thriller", excerpt: "A stunning display from the French star sealed a dramatic victory.", category: "La Liga", time: "2h ago", trending: true },
@@ -23,6 +25,7 @@ export default function NewsPage() {
         ))}
       </div>
 
+      <NativeAdSlot slot="feed" />
       <AffiliateBanner variant="inline" />
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -31,6 +34,8 @@ export default function NewsPage() {
         ))}
       </div>
 
+      <NativeAdSlot slot="article" />
+      <GlobalAlertSignup />
       <AffiliateBanner variant="hero" />
     </div>
   );
