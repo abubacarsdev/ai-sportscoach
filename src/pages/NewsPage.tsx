@@ -2,6 +2,8 @@ import NewsCard from "@/components/modules/news/NewsCard";
 import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
 import NativeAdSlot from "@/components/shared/NativeAdSlot";
 import GlobalAlertSignup from "@/components/shared/GlobalAlertSignup";
+import SEOHead from "@/components/shared/SEOHead";
+import { useI18n } from "@/contexts/I18nContext";
 
 const ALL_NEWS = [
   { title: "Mbappé Scores Hat-trick in El Clásico Thriller", excerpt: "A stunning display from the French star sealed a dramatic victory.", category: "La Liga", time: "2h ago", trending: true },
@@ -15,10 +17,13 @@ const ALL_NEWS = [
 ];
 
 export default function NewsPage() {
+  const { t } = useI18n();
+
   return (
     <div className="container py-6 space-y-6">
-      <h1 className="text-2xl font-black text-foreground">News & Gossip Hub</h1>
-      
+      <SEOHead title="Sports News & Gossip" description="Latest sports news, transfer rumors, and trending topics from football leagues worldwide." path="/news" />
+      <h1 className="text-2xl font-black text-foreground">{t("newsHub")}</h1>
+
       <div className="grid gap-4 md:grid-cols-3">
         {ALL_NEWS.slice(0, 3).map((news, i) => (
           <NewsCard key={i} {...news} large={i === 0} />

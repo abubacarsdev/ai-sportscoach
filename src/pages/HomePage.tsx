@@ -4,9 +4,11 @@ import DailyTips from "@/components/modules/ai-tools/DailyTips";
 import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
 import GlobalAlertSignup from "@/components/shared/GlobalAlertSignup";
 import NativeAdSlot from "@/components/shared/NativeAdSlot";
+import SEOHead from "@/components/shared/SEOHead";
 import { ArrowRight, Sparkles, TrendingUp, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useI18n } from "@/contexts/I18nContext";
 
 const TRENDING_NEWS = [
   { title: "Mbappé Scores Hat-trick in El Clásico Thriller", excerpt: "A stunning display from the French star sealed a dramatic victory under the lights at the Bernabéu.", category: "La Liga", time: "2h ago", trending: true, large: true },
@@ -17,8 +19,11 @@ const TRENDING_NEWS = [
 ];
 
 export default function HomePage() {
+  const { t } = useI18n();
+
   return (
     <div>
+      <SEOHead title="Home — Live Scores & AI Predictions" description="Global sports scores, AI betting predictions, and real-time odds comparison. Your ultimate sports intelligence platform." path="/" />
       <LiveScoreboard />
 
       <div className="container py-6 space-y-8">
@@ -26,10 +31,10 @@ export default function HomePage() {
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            { label: "Live Matches", value: "12", icon: Activity, color: "text-primary" },
-            { label: "AI Predictions", value: "48", icon: Sparkles, color: "text-secondary" },
-            { label: "Win Rate (AI)", value: "78%", icon: TrendingUp, color: "text-accent" },
-            { label: "Users Online", value: "2.4K", icon: Activity, color: "text-warning" },
+            { label: t("liveMatches"), value: "12", icon: Activity, color: "text-primary" },
+            { label: t("aiPredictions"), value: "48", icon: Sparkles, color: "text-secondary" },
+            { label: t("winRate"), value: "78%", icon: TrendingUp, color: "text-accent" },
+            { label: t("usersOnline"), value: "2.4K", icon: Activity, color: "text-warning" },
           ].map((stat) => {
             const Icon = stat.icon;
             return (
@@ -48,9 +53,9 @@ export default function HomePage() {
 
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-black text-foreground">Trending Now</h2>
+            <h2 className="text-xl font-black text-foreground">{t("trendingNow")}</h2>
             <Link to="/news" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-              All News <ArrowRight size={14} />
+              {t("allNews")} <ArrowRight size={14} />
             </Link>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
@@ -64,9 +69,9 @@ export default function HomePage() {
 
         <section>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-black text-foreground">Today's Golden Picks</h2>
+            <h2 className="text-xl font-black text-foreground">{t("todaysGoldenPicks")}</h2>
             <Link to="/ai-tools" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
-              AI Tools <ArrowRight size={14} />
+              {t("aiTools")} <ArrowRight size={14} />
             </Link>
           </div>
           <DailyTips />
