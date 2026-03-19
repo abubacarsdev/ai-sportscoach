@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Bell, CheckCircle, Globe } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useI18n } from "@/contexts/I18nContext";
 
 export default function GlobalAlertSignup() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const { t } = useI18n();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,10 +20,10 @@ export default function GlobalAlertSignup() {
           <Bell size={20} className="text-secondary-foreground" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-foreground">Global Betting Alerts</h3>
+          <h3 className="text-lg font-black text-foreground">{t("globalAlerts")}</h3>
           <div className="flex items-center gap-1.5">
             <Globe size={12} className="text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">EN • PT • ES • FR — Real-time AI predictions</p>
+            <p className="text-xs text-muted-foreground">EN • PT • ES • FR — {t("alertsDesc")}</p>
           </div>
         </div>
       </div>
@@ -58,7 +60,7 @@ export default function GlobalAlertSignup() {
               type="submit"
               className="rounded-lg bg-secondary px-5 py-2.5 text-sm font-bold text-secondary-foreground transition-transform active:scale-95"
             >
-              Subscribe
+              {t("subscribe")}
             </button>
           </motion.form>
         )}

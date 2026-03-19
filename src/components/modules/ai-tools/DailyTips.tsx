@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Trophy, Star, TrendingUp, Flame } from "lucide-react";
 import SocialShareButtons from "@/components/shared/SocialShareButtons";
+import { useI18n } from "@/contexts/I18nContext";
 
 const TIPS = [
   { match: "Arsenal vs Chelsea", tip: "Arsenal Win & Over 1.5", odd: 2.40, confidence: 88, tier: "gold" },
@@ -16,6 +17,8 @@ const TIER_STYLES = {
 };
 
 export default function DailyTips() {
+  const { t } = useI18n();
+
   return (
     <div className="rounded-xl border border-border bg-surface p-6">
       <div className="mb-6 flex items-center gap-3">
@@ -23,8 +26,8 @@ export default function DailyTips() {
           <Flame size={20} className="text-warning-foreground" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-foreground">Golden Bets of the Day</h3>
-          <p className="text-xs text-muted-foreground">AI-curated top picks • Updated daily</p>
+          <h3 className="text-lg font-black text-foreground">{t("goldenBets")}</h3>
+          <p className="text-xs text-muted-foreground">{t("goldenBetsDesc")}</p>
         </div>
       </div>
 
@@ -48,13 +51,13 @@ export default function DailyTips() {
                     <p className="text-[10px] text-muted-foreground">{tip.tip}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-mono-brand text-sm font-bold text-foreground">{tip.odd}</p>
-                  <p className="text-[10px] font-bold text-accent">{tip.confidence}% conf.</p>
+                <div className="flex items-center gap-3">
+                  <div className="text-right">
+                    <p className="font-mono-brand text-sm font-bold text-foreground">{tip.odd}</p>
+                    <p className="text-[10px] font-bold text-accent">{tip.confidence}% conf.</p>
+                  </div>
+                  <SocialShareButtons title={`${tip.match}: ${tip.tip} @ ${tip.odd}`} />
                 </div>
-              </div>
-              <div className="mt-2 border-t border-border/50 pt-2">
-                <SocialShareButtons title={`${tip.match}: ${tip.tip} @ ${tip.odd}`} />
               </div>
             </motion.div>
           );

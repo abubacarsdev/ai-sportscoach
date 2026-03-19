@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Activity, Newspaper, BarChart3, Sparkles, Globe, Menu, X } from "lucide-react";
+import { Activity, Newspaper, BarChart3, Sparkles, Menu, X, Home } from "lucide-react";
+import { useI18n, Lang } from "@/contexts/I18nContext";
 
 const NAV_ITEMS = [
-  { path: "/", label: "Home", icon: Activity },
-  { path: "/live", label: "Live", icon: Activity },
-  { path: "/news", label: "News", icon: Newspaper },
-  { path: "/odds", label: "Odds", icon: BarChart3 },
-  { path: "/ai-tools", label: "AI Tools", icon: Sparkles },
+  { path: "/", labelKey: "home", icon: Home },
+  { path: "/live", labelKey: "live", icon: Activity },
+  { path: "/news", labelKey: "news", icon: Newspaper },
+  { path: "/odds", labelKey: "odds", icon: BarChart3 },
+  { path: "/ai-tools", labelKey: "aiTools", icon: Sparkles },
 ];
 
-const LANGUAGES = [
+const LANGUAGES: { code: Lang; label: string }[] = [
   { code: "en", label: "EN" },
   { code: "pt", label: "PT" },
   { code: "es", label: "ES" },
@@ -19,7 +20,7 @@ const LANGUAGES = [
 
 export default function Navbar() {
   const location = useLocation();
-  const [lang, setLang] = useState("en");
+  const { lang, setLang, t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -49,7 +50,7 @@ export default function Navbar() {
                 }`}
               >
                 <Icon size={16} />
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             );
           })}

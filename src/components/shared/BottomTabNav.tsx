@@ -1,16 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Activity, Newspaper, Sparkles, User } from "lucide-react";
+import { Home, Activity, Newspaper, Sparkles, BarChart3 } from "lucide-react";
+import { useI18n } from "@/contexts/I18nContext";
 
 const TABS = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/live", label: "Live", icon: Activity },
-  { path: "/ai-tools", label: "AI", icon: Sparkles },
-  { path: "/news", label: "News", icon: Newspaper },
-  { path: "/odds", label: "Odds", icon: User },
+  { path: "/", labelKey: "home", icon: Home },
+  { path: "/live", labelKey: "live", icon: Activity },
+  { path: "/ai-tools", labelKey: "aiTools", icon: Sparkles },
+  { path: "/news", labelKey: "news", icon: Newspaper },
+  { path: "/odds", labelKey: "odds", icon: BarChart3 },
 ];
 
 export default function BottomTabNav() {
   const location = useLocation();
+  const { t } = useI18n();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-surface/95 backdrop-blur-md md:hidden">
@@ -28,7 +30,7 @@ export default function BottomTabNav() {
             >
               <Icon size={20} strokeWidth={active ? 2.5 : 2} />
               <span className={`text-[10px] font-bold ${active ? "" : "font-semibold"}`}>
-                {tab.label}
+                {t(tab.labelKey)}
               </span>
               {tab.path === "/live" && (
                 <span className="absolute -top-0.5 right-0.5 h-2 w-2 rounded-full bg-primary animate-live-pulse" />

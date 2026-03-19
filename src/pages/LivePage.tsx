@@ -1,6 +1,8 @@
 import LiveScoreboard from "@/components/modules/match-center/LiveScoreboard";
 import MatchCard from "@/components/modules/match-center/MatchCard";
 import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
+import SEOHead from "@/components/shared/SEOHead";
+import { useI18n } from "@/contexts/I18nContext";
 
 const LIVE_MATCHES = [
   { league: "Premier League", home: "Arsenal", away: "Chelsea", homeScore: 2, awayScore: 1, minute: "67'", isLive: true, stats: { possession: [58, 42] as [number, number], shots: [14, 8] as [number, number], corners: [6, 3] as [number, number] } },
@@ -12,15 +14,18 @@ const LIVE_MATCHES = [
 ];
 
 export default function LivePage() {
+  const { t } = useI18n();
+
   return (
     <div>
+      <SEOHead title="Live Match Center" description="Real-time live scores, minute-by-minute updates, and match statistics from leagues worldwide." path="/live" />
       <LiveScoreboard />
       <div className="container py-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-black text-foreground">Live Match Center</h1>
+          <h1 className="text-2xl font-black text-foreground">{t("liveMatchCenter")}</h1>
           <div className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1">
             <span className="h-2 w-2 rounded-full bg-primary animate-live-pulse" />
-            <span className="text-xs font-bold text-primary">{LIVE_MATCHES.length} Live</span>
+            <span className="text-xs font-bold text-primary">{LIVE_MATCHES.length} {t("live")}</span>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ShieldAlert, Zap, TrendingUp, Trophy } from "lucide-react";
+import { useAppConfig } from "@/contexts/AppConfigContext";
 
 const RISK_LEVELS = [
   { id: "low", label: "Safe", color: "text-accent", bg: "bg-accent/10", icon: ShieldAlert },
@@ -18,6 +19,7 @@ export default function BetSlipGenerator() {
   const [risk, setRisk] = useState("med");
   const [generated, setGenerated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { config } = useAppConfig();
 
   const handleGenerate = () => {
     setLoading(true);
@@ -41,7 +43,6 @@ export default function BetSlipGenerator() {
         </div>
       </div>
 
-      {/* Risk selector */}
       <div className="space-y-3">
         <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
           Risk Profile
@@ -67,7 +68,6 @@ export default function BetSlipGenerator() {
           })}
         </div>
 
-        {/* Generate button */}
         <button
           onClick={handleGenerate}
           disabled={loading}
@@ -92,7 +92,6 @@ export default function BetSlipGenerator() {
         </button>
       </div>
 
-      {/* Generated slip */}
       {generated && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -127,14 +126,13 @@ export default function BetSlipGenerator() {
             </div>
           ))}
 
-          {/* Affiliate CTA */}
           <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-4 mt-4">
             <p className="text-[10px] font-black uppercase tracking-wider text-primary mb-1.5">Partner Bonus</p>
             <p className="text-sm text-foreground">
               Boost these odds by <span className="font-bold text-primary">600%</span> on your first deposit.
             </p>
             <div className="mt-2 rounded-lg border border-border bg-surface px-3 py-2 text-center font-mono-brand text-xs font-bold text-primary">
-              PROMO: WINBIG600
+              PROMO: {config.promoCode}
             </div>
           </div>
         </motion.div>
