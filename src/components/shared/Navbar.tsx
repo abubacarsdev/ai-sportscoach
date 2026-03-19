@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Activity, Newspaper, BarChart3, Sparkles, Shield, Globe, Menu, X } from "lucide-react";
+import { Activity, Newspaper, BarChart3, Sparkles, Globe, Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { path: "/", label: "Home", icon: Activity },
@@ -25,7 +25,6 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-surface/95 backdrop-blur-sm">
       <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
             <Activity size={20} className="text-primary-foreground" />
@@ -35,7 +34,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
@@ -57,9 +55,7 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Right side */}
         <div className="flex items-center gap-2">
-          {/* Language switcher */}
           <div className="hidden items-center gap-0.5 rounded-lg border border-border p-0.5 md:flex">
             {LANGUAGES.map((l) => (
               <button
@@ -76,15 +72,6 @@ export default function Navbar() {
             ))}
           </div>
 
-          <Link
-            to="/admin"
-            className="hidden items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:flex"
-          >
-            <Shield size={14} />
-            Admin
-          </Link>
-
-          {/* Mobile menu button */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="rounded-lg p-2 text-muted-foreground hover:bg-muted md:hidden"
@@ -94,10 +81,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile dropdown */}
       {mobileOpen && (
         <div className="border-t border-border bg-surface p-4 md:hidden">
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-1">
             {LANGUAGES.map((l) => (
               <button
                 key={l.code}
@@ -112,14 +98,6 @@ export default function Navbar() {
               </button>
             ))}
           </div>
-          <Link
-            to="/admin"
-            onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-2 rounded-lg bg-muted px-3 py-2 text-sm font-semibold text-foreground"
-          >
-            <Shield size={14} />
-            Admin Panel
-          </Link>
         </div>
       )}
     </header>

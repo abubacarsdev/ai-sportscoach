@@ -1,5 +1,6 @@
 import { Clock, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
+import SocialShareButtons from "@/components/shared/SocialShareButtons";
 
 interface NewsCardProps {
   title: string;
@@ -19,7 +20,6 @@ export default function NewsCard({ title, excerpt, category, time, trending, lar
         large ? "md:col-span-2 md:row-span-2" : ""
       }`}
     >
-      {/* Image placeholder */}
       <div className={`relative bg-gradient-to-br from-secondary/20 to-primary/10 ${large ? "h-48 md:h-64" : "h-32"}`}>
         {trending && (
           <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1">
@@ -41,9 +41,12 @@ export default function NewsCard({ title, excerpt, category, time, trending, lar
         <p className={`mt-1.5 text-muted-foreground leading-relaxed ${large ? "text-sm" : "text-xs"} line-clamp-2`}>
           {excerpt}
         </p>
-        <div className="mt-3 flex items-center gap-1.5 text-muted-foreground">
-          <Clock size={12} />
-          <span className="text-[10px] font-semibold">{time}</span>
+        <div className="mt-3 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Clock size={12} />
+            <span className="text-[10px] font-semibold">{time}</span>
+          </div>
+          <SocialShareButtons title={title} />
         </div>
       </div>
     </motion.article>

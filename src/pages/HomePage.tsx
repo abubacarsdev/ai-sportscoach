@@ -2,6 +2,8 @@ import LiveScoreboard from "@/components/modules/match-center/LiveScoreboard";
 import NewsCard from "@/components/modules/news/NewsCard";
 import DailyTips from "@/components/modules/ai-tools/DailyTips";
 import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
+import GlobalAlertSignup from "@/components/shared/GlobalAlertSignup";
+import NativeAdSlot from "@/components/shared/NativeAdSlot";
 import { ArrowRight, Sparkles, TrendingUp, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -17,14 +19,11 @@ const TRENDING_NEWS = [
 export default function HomePage() {
   return (
     <div>
-      {/* Live scoreboard strip */}
       <LiveScoreboard />
 
       <div className="container py-6 space-y-8">
-        {/* Hero CTA */}
         <AffiliateBanner variant="hero" />
 
-        {/* Quick Stats */}
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
             { label: "Live Matches", value: "12", icon: Activity, color: "text-primary" },
@@ -47,7 +46,6 @@ export default function HomePage() {
           })}
         </div>
 
-        {/* News Grid */}
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black text-foreground">Trending Now</h2>
@@ -62,7 +60,8 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Daily Tips */}
+        <NativeAdSlot slot="feed" />
+
         <section>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-black text-foreground">Today's Golden Picks</h2>
@@ -73,7 +72,7 @@ export default function HomePage() {
           <DailyTips />
         </section>
 
-        {/* Inline ad */}
+        <GlobalAlertSignup />
         <AffiliateBanner variant="inline" />
       </div>
     </div>
