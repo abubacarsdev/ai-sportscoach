@@ -1,0 +1,81 @@
+import LiveScoreboard from "@/components/modules/match-center/LiveScoreboard";
+import NewsCard from "@/components/modules/news/NewsCard";
+import DailyTips from "@/components/modules/ai-tools/DailyTips";
+import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
+import { ArrowRight, Sparkles, TrendingUp, Activity } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const TRENDING_NEWS = [
+  { title: "Mbappé Scores Hat-trick in El Clásico Thriller", excerpt: "A stunning display from the French star sealed a dramatic victory under the lights at the Bernabéu.", category: "La Liga", time: "2h ago", trending: true, large: true },
+  { title: "Arsenal Close In On Premier League Title", excerpt: "The Gunners moved 5 points clear at the top after a dominant display.", category: "Premier League", time: "3h ago", trending: false },
+  { title: "Champions League Draw: Who Faces Who?", excerpt: "The quarter-final draw has thrown up some mouthwatering clashes.", category: "UCL", time: "5h ago", trending: true },
+  { title: "Transfer Rumor: Bellingham to PSG?", excerpt: "Reports from France suggest a record-breaking bid is being prepared.", category: "Transfers", time: "1h ago", trending: false },
+  { title: "VAR Controversy in Serie A Derby", excerpt: "AC Milan denied a clear penalty in the dying moments of the match.", category: "Serie A", time: "4h ago", trending: false },
+];
+
+export default function HomePage() {
+  return (
+    <div>
+      {/* Live scoreboard strip */}
+      <LiveScoreboard />
+
+      <div className="container py-6 space-y-8">
+        {/* Hero CTA */}
+        <AffiliateBanner variant="hero" />
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {[
+            { label: "Live Matches", value: "12", icon: Activity, color: "text-primary" },
+            { label: "AI Predictions", value: "48", icon: Sparkles, color: "text-secondary" },
+            { label: "Win Rate (AI)", value: "78%", icon: TrendingUp, color: "text-accent" },
+            { label: "Users Online", value: "2.4K", icon: Activity, color: "text-warning" },
+          ].map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <motion.div
+                key={stat.label}
+                whileHover={{ y: -2 }}
+                className="rounded-xl border border-border bg-surface p-4"
+              >
+                <Icon size={18} className={stat.color} />
+                <p className="mt-2 font-mono-brand text-2xl font-black text-foreground">{stat.value}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{stat.label}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* News Grid */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-black text-foreground">Trending Now</h2>
+            <Link to="/news" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              All News <ArrowRight size={14} />
+            </Link>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {TRENDING_NEWS.map((news, i) => (
+              <NewsCard key={i} {...news} large={i === 0} />
+            ))}
+          </div>
+        </section>
+
+        {/* Daily Tips */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-black text-foreground">Today's Golden Picks</h2>
+            <Link to="/ai-tools" className="flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              AI Tools <ArrowRight size={14} />
+            </Link>
+          </div>
+          <DailyTips />
+        </section>
+
+        {/* Inline ad */}
+        <AffiliateBanner variant="inline" />
+      </div>
+    </div>
+  );
+}
