@@ -1,10 +1,15 @@
 import { Zap, ExternalLink } from "lucide-react";
+import { useAppConfig } from "@/contexts/AppConfigContext";
 
 interface AffiliateBannerProps {
   variant?: "inline" | "hero";
 }
 
 export default function AffiliateBanner({ variant = "inline" }: AffiliateBannerProps) {
+  const { config } = useAppConfig();
+
+  if (!config.showAffiliateBanners) return null;
+
   if (variant === "hero") {
     return (
       <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-surface to-warning/10 p-6">
@@ -21,25 +26,30 @@ export default function AffiliateBanner({ variant = "inline" }: AffiliateBannerP
             </p>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <button className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-transform active:scale-95">
+            <a
+              href={config.affiliateUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-transform active:scale-95"
+            >
               Claim Bonus <ExternalLink size={14} />
-            </button>
-            <span className="font-mono-brand text-xs font-bold text-primary">Code: WINBIG600</span>
+            </a>
+            <span className="font-mono-brand text-xs font-bold text-primary">Code: {config.promoCode}</span>
           </div>
         </div>
       </div>
     );
   }
 
+  if (!config.showInlineAds) return null;
+
   return (
     <div className="flex items-center justify-between rounded-lg border border-dashed border-primary/20 bg-primary/5 px-4 py-3">
       <div className="flex items-center gap-2">
         <Zap size={14} className="text-primary" />
-        <span className="text-xs font-bold text-foreground">
-          600% Bonus on 1win
-        </span>
+        <span className="text-xs font-bold text-foreground">600% Bonus on 1win</span>
       </div>
-      <span className="font-mono-brand text-[10px] font-bold text-primary">WINBIG600</span>
+      <span className="font-mono-brand text-[10px] font-bold text-primary">{config.promoCode}</span>
     </div>
   );
 }
