@@ -1,27 +1,27 @@
-import { ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowUp, ArrowDown, Minus, Loader2 } from "lucide-react";
+
+interface Bookmaker {
+  name: string;
+  home: number;
+  draw: number;
+  away: number;
+}
 
 interface OddsRow {
   match: string;
   league: string;
-  bookmakers: {
-    name: string;
-    home: number;
-    draw: number;
-    away: number;
-  }[];
-  bestOdd: "home" | "draw" | "away";
+  bookmakers: Bookmaker[];
 }
 
-const MOCK_ODDS: OddsRow[] = [
+const FALLBACK_ODDS: OddsRow[] = [
   {
     match: "Arsenal vs Chelsea",
     league: "Premier League",
     bookmakers: [
       { name: "1win", home: 1.85, draw: 3.40, away: 4.20 },
       { name: "Bet365", home: 1.80, draw: 3.50, away: 4.10 },
-      { name: "Betway", home: 1.82, draw: 3.30, away: 4.30 },
     ],
-    bestOdd: "away",
   },
   {
     match: "Real Madrid vs Barcelona",
@@ -29,52 +29,106 @@ const MOCK_ODDS: OddsRow[] = [
     bookmakers: [
       { name: "1win", home: 2.10, draw: 3.20, away: 3.50 },
       { name: "Bet365", home: 2.05, draw: 3.30, away: 3.40 },
-      { name: "Betway", home: 2.15, draw: 3.10, away: 3.60 },
     ],
-    bestOdd: "home",
-  },
-  {
-    match: "Bayern vs Dortmund",
-    league: "Bundesliga",
-    bookmakers: [
-      { name: "1win", home: 1.65, draw: 3.80, away: 5.00 },
-      { name: "Bet365", home: 1.60, draw: 3.90, away: 4.80 },
-      { name: "Betway", home: 1.62, draw: 3.75, away: 5.20 },
-    ],
-    bestOdd: "away",
   },
 ];
 
 export default function OddsTable() {
+  const [oddsData, setOddsData] = useState<OddsRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchOdds = async () => {
+      try {
+        const apiKey = import.meta.env.VITE_API_FOOTBALL_KEY;
+        if (!apiKey) {
+          setOddsData(FALLBACK_ODDS);
+          setLoading(false);
+          return;
+        }
+
+        // Buscamos odds para os jogos do dia (ID 1 é 1X2 market)
+        const res = await fetch("https://v3.football.api-sports.io/odds?league=39&season=2025", {
+          method: "GET",
+          headers: {
+            "x-apisports-key": apiKey,
+            "x-rapidapi-host": "v3.football.api-sports.io"
+          }
+        });
+
+        const data = await res.json();
+
+        if (data.response && data.response.length > 0) {
+          const formatted = data.response.slice(0, 5).map((m: any) => ({
+            match: `${m.fixture.timezone.split('/')[1] || ''} Match`, // Placeholder se nome do time não vier direto
+            league: m.league.name,
+            bookmakers: m.bookmakers.map((b: any) => {
+              const mainMarket = b.bets.find((bet: any) => bet.id === 1);
+              return {
+                name: b.name,
+                home: parseFloat(mainMarket?.values.find((v: any) => v.value === "Home")?.odd || "0"),
+                draw: parseFloat(mainMarket?.values.find((v: any) => v.value === "Draw")?.odd || "0"),
+                away: parseFloat(mainMarket?.values.find((v: any) => v.value === "Away")?.odd || "0"),
+              };
+            })
+          }));
+          setOddsData(formatted);
+        } else {
+          setOddsData(FALLBACK_ODDS);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar Odds:", error);
+        setOddsData(FALLBACK_ODDS);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOdds();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Sincronizando Mercado...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
-      {MOCK_ODDS.map((row) => (
-        <div key={row.match} className="rounded-xl border border-border bg-surface overflow-hidden">
-          <div className="border-b border-border bg-muted/50 px-4 py-2.5">
-            <p className="text-sm font-bold text-foreground">{row.match}</p>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{row.league}</p>
+      {oddsData.map((row, idx) => (
+        <div key={idx} className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
+          <div className="border-b border-border bg-muted/30 px-4 py-3">
+            <p className="text-sm font-black text-foreground uppercase tracking-tight">{row.match}</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-500">{row.league}</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  <th className="px-4 py-2 text-left">Bookmaker</th>
-                  <th className="px-4 py-2 text-center">Home</th>
-                  <th className="px-4 py-2 text-center">Draw</th>
-                  <th className="px-4 py-2 text-center">Away</th>
+                <tr className="border-b border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground bg-muted/10">
+                  <th className="px-4 py-3 text-left">Bookmaker</th>
+                  <th className="px-4 py-3 text-center">Casa</th>
+                  <th className="px-4 py-3 text-center">Empate</th>
+                  <th className="px-4 py-3 text-center">Fora</th>
                 </tr>
               </thead>
               <tbody>
-                {row.bookmakers.map((bk) => {
+                {row.bookmakers.slice(0, 3).map((bk) => {
                   const maxHome = Math.max(...row.bookmakers.map((b) => b.home));
                   const maxDraw = Math.max(...row.bookmakers.map((b) => b.draw));
                   const maxAway = Math.max(...row.bookmakers.map((b) => b.away));
+                  
                   return (
-                    <tr key={bk.name} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                      <td className="px-4 py-2.5 font-semibold text-foreground">{bk.name}</td>
-                      <OddCell value={bk.home} isBest={bk.home === maxHome} />
-                      <OddCell value={bk.draw} isBest={bk.draw === maxDraw} />
-                      <OddCell value={bk.away} isBest={bk.away === maxAway} />
+                    <tr key={bk.name} className="border-b border-border last:border-0 hover:bg-emerald-500/[0.02] transition-colors">
+                      <td className="px-4 py-3 font-bold text-foreground flex items-center gap-2">
+                        <span className={`h-1.5 w-1.5 rounded-full ${bk.name.toLowerCase().includes('1win') ? 'bg-emerald-500' : 'bg-slate-500'}`} />
+                        {bk.name}
+                      </td>
+                      <OddCell value={bk.home} isBest={bk.home === maxHome && bk.home > 0} />
+                      <OddCell value={bk.draw} isBest={bk.draw === maxDraw && bk.draw > 0} />
+                      <OddCell value={bk.away} isBest={bk.away === maxAway && bk.away > 0} />
                     </tr>
                   );
                 })}
@@ -88,13 +142,15 @@ export default function OddsTable() {
 }
 
 function OddCell({ value, isBest }: { value: number; isBest: boolean }) {
+  if (value === 0) return <td className="px-4 py-3 text-center text-muted-foreground/30">-</td>;
+  
   return (
-    <td className="px-4 py-2.5 text-center">
+    <td className="px-4 py-3 text-center">
       <span
-        className={`inline-block rounded-md px-2.5 py-1 font-mono-brand text-sm font-bold ${
+        className={`inline-block rounded px-2.5 py-1 font-mono text-xs font-black transition-all ${
           isBest
-            ? "bg-accent/15 text-accent"
-            : "text-foreground"
+            ? "bg-emerald-500 text-white shadow-sm scale-105"
+            : "bg-muted/50 text-foreground"
         }`}
       >
         {value.toFixed(2)}
