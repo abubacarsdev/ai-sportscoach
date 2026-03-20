@@ -1,36 +1,63 @@
 import OddsTable from "@/components/modules/odds/OddsTable";
 import AffiliateBanner from "@/components/modules/ads/AffiliateBanner";
 import SEOHead from "@/components/shared/SEOHead";
+import { useI18n } from "@/contexts/I18nContext";
+import { BarChart3, Globe } from "lucide-react";
 
 export default function OddsPage() {
-  // Puxamos a chave para garantir que o componente OddsTable a receba se necessário
-  const apiKey = import.meta.env.VITE_API_FOOTBALL_KEY;
+  const { t } = useI18n();
 
   return (
-    <div className="container py-6 space-y-6">
+    <div className="bg-background min-h-screen pb-12">
       <SEOHead 
-        title="Real-Time Odds Comparison" 
-        description="Compare betting odds from top bookmakers worldwide. Real-time updates for football, basketball, and more." 
+        title="Real-Time Odds Comparison — Market Intelligence" 
+        description="Compare as melhores odds das principais casas de apostas mundiais. Atualizações em tempo real para futebol e mercados asiáticos." 
         path="/odds" 
       />
       
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-foreground uppercase tracking-tighter">Comparação de Odds</h1>
-          <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest opacity-70">Inteligência de Mercado em Tempo Real</p>
+      <div className="container py-8 space-y-8">
+        
+        {/* Header Estratégico */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-border pb-6">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 mb-1">
+               <Globe size={14} className="text-emerald-500" />
+               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cobertura Internacional</span>
+            </div>
+            <h1 className="text-3xl font-black text-foreground uppercase tracking-tighter leading-none">
+              Comparação de Odds
+            </h1>
+            <p className="text-sm font-medium text-muted-foreground opacity-80 uppercase tracking-tight">
+              Análise em tempo real de mercados 1X2 e Handicaps
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2.5 rounded-xl bg-slate-900 border border-slate-800 px-4 py-2 shadow-lg">
+            <div className="relative h-2 w-2">
+               <span className="absolute inset-0 h-2 w-2 rounded-full bg-emerald-500 animate-ping opacity-75" />
+               <span className="relative h-2 w-2 rounded-full bg-emerald-500 block" />
+            </div>
+            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Live Sync: 60s</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1.5 border border-emerald-500/20">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] font-black text-emerald-500 uppercase">Atualizado a cada 60s</span>
+
+        {/* Banner de Monetização Rápida (1win) */}
+        <AffiliateBanner variant="inline" />
+        
+        {/* Tabela de Odds Real (Onde ligámos a API-Football) */}
+        <div className="space-y-4">
+           <div className="flex items-center gap-2 ml-1">
+              <BarChart3 size={16} className="text-primary" />
+              <h2 className="text-xs font-black uppercase tracking-widest text-foreground">Melhores Cotações do Mercado</h2>
+           </div>
+           <OddsTable />
+        </div>
+        
+        {/* Banner Hero Final para converter o utilizador que comparou as odds */}
+        <div className="pt-4">
+           <AffiliateBanner variant="hero" />
         </div>
       </div>
-
-      <AffiliateBanner variant="inline" />
-      
-      {/* O OddsTable é onde a mágica acontece. Se a chave não existir, ele usará Backup */}
-      <OddsTable />
-      
-      <AffiliateBanner variant="hero" />
     </div>
   );
 }
