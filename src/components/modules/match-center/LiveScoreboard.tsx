@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Activity } from "lucide-react";
+import { Activity, Loader2 } from "lucide-react";
 
 interface Match {
   id: string;
@@ -12,54 +13,106 @@ interface Match {
   isLive: boolean;
 }
 
-const MOCK_MATCHES: Match[] = [
+const FALLBACK_MATCHES: Match[] = [
   { id: "1", league: "Premier League", home: "Arsenal", away: "Chelsea", homeScore: 2, awayScore: 1, minute: "67'", isLive: true },
   { id: "2", league: "La Liga", home: "Real Madrid", away: "Barcelona", homeScore: 1, awayScore: 1, minute: "45+2'", isLive: true },
-  { id: "3", league: "Serie A", home: "AC Milan", away: "Inter Milan", homeScore: 0, awayScore: 0, minute: "12'", isLive: true },
-  { id: "4", league: "Bundesliga", home: "Bayern Munich", away: "Dortmund", homeScore: 3, awayScore: 2, minute: "82'", isLive: true },
-  { id: "5", league: "Ligue 1", home: "PSG", away: "Lyon", homeScore: 1, awayScore: 0, minute: "34'", isLive: true },
 ];
 
 export default function LiveScoreboard() {
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLiveScores = async () => {
+      try {
+        const apiKey = import.meta.env.VITE_API_FOOTBALL_KEY;
+        if (!apiKey) {
+          setMatches(FALLBACK_MATCHES);
+          setLoading(false);
+          return;
+        }
+
+        const res = await fetch("https://v3.football.api-sports.io/fixtures?live=all", {
+          method: "GET",
+          headers: {
+            "x-apisports-key": apiKey,
+            "x-rapidapi-host": "v3.football.api-sports.io"
+          }
+        });
+
+        const data = await res.json();
+
+        if (data.response && data.response.length > 0) {
+          const liveData = data.response.map((m: any) => ({
+            id: m.fixture.id.toString(),
+            league: m.league.name,
+            home: m.teams.home.name,
+            away: m.teams.away.name,
+            homeScore: m.goals.home,
+            awayScore: m.goals.away,
+            minute: m.fixture.status.elapsed + "'",
+            isLive: true
+          }));
+          setMatches(liveData);
+        } else {
+          setMatches(FALLBACK_MATCHES);
+        }
+      } catch (error) {
+        console.error("Scoreboard Error:", error);
+        setMatches(FALLBACK_MATCHES);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLiveScores();
+    const interval = setInterval(fetchLiveScores, 60000); // Atualiza a cada minuto
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="w-full overflow-hidden border-b border-border bg-surface">
+    <div className="w-full overflow-hidden border-b border-border bg-surface/50 backdrop-blur-md sticky top-0 z-40">
       <div className="container py-3">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-primary animate-live-pulse" />
-          <span className="text-xs font-black uppercase tracking-wider text-primary">Live Now</span>
-          <span className="text-xs font-semibold text-muted-foreground">
-            {MOCK_MATCHES.length} matches
-          </span>
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-live-pulse" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Live Now</span>
+            <span className="text-[10px] font-bold text-muted-foreground uppercase">
+               • {loading ? "..." : matches.length} matches
+            </span>
+          </div>
+          {loading && <Loader2 size={12} className="animate-spin text-muted-foreground" />}
         </div>
-        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
-          {MOCK_MATCHES.map((match, i) => (
+        
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide select-none">
+          {matches.map((match, i) => (
             <motion.div
               key={match.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="flex min-w-[220px] flex-col rounded-xl border border-border bg-background p-3 hover:border-primary/30 transition-colors cursor-pointer"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.03 }}
+              className="flex min-w-[200px] flex-col rounded-xl border border-border bg-background p-3 hover:border-emerald-500/30 transition-all cursor-pointer shadow-sm active:scale-95"
             >
-              <span className="mb-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <span className="mb-2 text-[8px] font-black uppercase tracking-widest text-muted-foreground truncate max-w-[160px]">
                 {match.league}
               </span>
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-1.5">
-                  <span className={`text-sm font-bold ${match.homeScore > match.awayScore ? "text-foreground" : "text-muted-foreground"}`}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col gap-1 flex-1 overflow-hidden">
+                  <span className={`text-xs font-black truncate ${match.homeScore >= match.awayScore ? "text-foreground" : "text-muted-foreground"}`}>
                     {match.home}
                   </span>
-                  <span className={`text-sm font-bold ${match.awayScore > match.homeScore ? "text-foreground" : "text-muted-foreground"}`}>
+                  <span className={`text-xs font-black truncate ${match.awayScore >= match.homeScore ? "text-foreground" : "text-muted-foreground"}`}>
                     {match.away}
                   </span>
                 </div>
-                <div className="flex flex-col items-end gap-1.5">
-                  <span className="font-mono-brand text-lg font-bold text-foreground">{match.homeScore}</span>
-                  <span className="font-mono-brand text-lg font-bold text-foreground">{match.awayScore}</span>
+                <div className="flex flex-col items-end gap-1 border-l border-border pl-3">
+                  <span className="font-mono text-sm font-black text-foreground leading-none">{match.homeScore}</span>
+                  <span className="font-mono text-sm font-black text-foreground leading-none">{match.awayScore}</span>
                 </div>
               </div>
-              <div className="mt-2 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-live-pulse" />
-                <span className="font-mono-brand text-xs font-bold text-primary">{match.minute}</span>
+              <div className="mt-2 flex items-center gap-1.5 border-t border-border pt-2">
+                <span className="h-1 w-1 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-mono text-[9px] font-black text-emerald-500 uppercase">{match.minute}</span>
               </div>
             </motion.div>
           ))}
