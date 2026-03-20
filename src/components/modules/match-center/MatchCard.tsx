@@ -14,65 +14,77 @@ interface MatchCardProps {
 
 export default function MatchCard({ league, home, away, homeScore, awayScore, minute, isLive, stats }: MatchCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-4 transition-shadow hover:shadow-md">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">{league}</span>
+    <div className="rounded-xl border border-border bg-surface p-5 transition-all hover:shadow-lg hover:border-emerald-500/20 group">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground bg-muted/30 px-2 py-0.5 rounded">
+          {league}
+        </span>
         {isLive ? (
-          <div className="flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-live-pulse" />
-            <span className="font-mono-brand text-[10px] font-bold text-primary">{minute}</span>
+          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 border border-emerald-500/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-live-pulse" />
+            <span className="font-mono text-[10px] font-black text-emerald-500 uppercase tracking-tighter">{minute}</span>
           </div>
         ) : (
-          <div className="flex items-center gap-1 text-muted-foreground">
-            <Clock size={12} />
-            <span className="text-[10px] font-semibold">{minute}</span>
+          <div className="flex items-center gap-1.5 text-slate-500 bg-slate-500/10 px-3 py-1 rounded-full border border-slate-500/10">
+            <Clock size={10} className="text-slate-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest">{minute}</span>
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between py-2">
-        <div className="flex-1">
-          <p className={`text-sm font-bold ${homeScore > awayScore ? "text-foreground" : "text-muted-foreground"}`}>{home}</p>
+      <div className="flex items-center justify-between gap-4 py-2">
+        <div className="flex-1 text-center">
+          <p className={`text-sm font-black uppercase tracking-tight leading-tight ${homeScore > awayScore ? "text-foreground" : "text-muted-foreground opacity-70"}`}>
+            {home}
+          </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg bg-foreground px-3 py-1.5">
-          <span className="font-mono-brand text-lg font-black text-surface">{homeScore}</span>
-          <span className="text-muted-foreground">-</span>
-          <span className="font-mono-brand text-lg font-black text-surface">{awayScore}</span>
+        
+        <div className="flex items-center gap-2.5 rounded-xl bg-slate-900 border border-slate-800 px-4 py-2 shadow-inner">
+          <span className="font-mono text-xl font-black text-white">{homeScore}</span>
+          <span className="text-slate-600 font-bold">:</span>
+          <span className="font-mono text-xl font-black text-white">{awayScore}</span>
         </div>
-        <div className="flex-1 text-right">
-          <p className={`text-sm font-bold ${awayScore > homeScore ? "text-foreground" : "text-muted-foreground"}`}>{away}</p>
+
+        <div className="flex-1 text-center">
+          <p className={`text-sm font-black uppercase tracking-tight leading-tight ${awayScore > homeScore ? "text-foreground" : "text-muted-foreground opacity-70"}`}>
+            {away}
+          </p>
         </div>
       </div>
 
-      {stats && (
-        <div className="mt-3 space-y-2 border-t border-border pt-3">
-          <StatBar label="Possession" left={stats.possession[0]} right={stats.possession[1]} unit="%" />
-          <StatBar label="Shots" left={stats.shots[0]} right={stats.shots[1]} />
-          <StatBar label="Corners" left={stats.corners[0]} right={stats.corners[1]} />
+      {/* Só mostra as estatísticas se elas existirem e não forem [0,0] */}
+      {stats && (stats.possession[0] > 0 || stats.shots[0] > 0) && (
+        <div className="mt-5 space-y-2.5 border-t border-border pt-4">
+          <StatBar label="Posse" left={stats.possession[0]} right={stats.possession[1]} unit="%" color="bg-emerald-500" />
+          <StatBar label="Remates" left={stats.shots[0]} right={stats.shots[1]} color="bg-primary" />
+          <StatBar label="Cantos" left={stats.corners[0]} right={stats.corners[1]} color="bg-warning" />
         </div>
       )}
 
-      <div className="mt-3 border-t border-border pt-3">
-        <SocialShareButtons title={`${home} ${homeScore} - ${awayScore} ${away}`} />
+      <div className="mt-4 border-t border-border pt-4 flex items-center justify-between">
+        <div className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+          Partilhar Resultado
+        </div>
+        <SocialShareButtons title={`${home} ${homeScore} - ${awayScore} ${away} (LIVE)`} />
       </div>
     </div>
   );
 }
 
-function StatBar({ label, left, right, unit = "" }: { label: string; left: number; right: number; unit?: string }) {
+function StatBar({ label, left, right, unit = "", color = "bg-primary" }: { label: string; left: number; right: number; unit?: string; color?: string }) {
   const total = left + right || 1;
   const leftPct = (left / total) * 100;
   return (
-    <div className="flex items-center gap-2 text-xs">
-      <span className="w-8 text-right font-mono-brand font-bold text-foreground">{left}{unit}</span>
-      <div className="flex-1 flex h-1.5 rounded-full overflow-hidden bg-muted">
-        <div className="h-full bg-secondary rounded-full" style={{ width: `${leftPct}%` }} />
+    <div className="flex items-center gap-3 text-[10px]">
+      <span className="w-8 text-right font-mono font-black text-foreground">{left}{unit}</span>
+      <div className="flex-1 flex h-1.5 rounded-full overflow-hidden bg-slate-800/50 p-[1px]">
+        <div className={`h-full ${color} rounded-full transition-all duration-700`} style={{ width: `${leftPct}%` }} />
       </div>
-      <span className="w-20 text-center text-muted-foreground font-semibold">{label}</span>
-      <div className="flex-1 flex h-1.5 rounded-full overflow-hidden bg-muted justify-end">
-        <div className="h-full bg-primary rounded-full" style={{ width: `${100 - leftPct}%` }} />
+      <span className="w-16 text-center text-[9px] font-black uppercase tracking-widest text-muted-foreground">{label}</span>
+      <div className="flex-1 flex h-1.5 rounded-full overflow-hidden bg-slate-800/50 p-[1px] justify-end">
+        <div className={`h-full ${color} rounded-full transition-all duration-700`} style={{ width: `${100 - leftPct}%` }} />
       </div>
-      <span className="w-8 font-mono-brand font-bold text-foreground">{right}{unit}</span>
+      <span className="w-8 font-mono font-black text-foreground">{right}{unit}</span>
     </div>
   );
 }
