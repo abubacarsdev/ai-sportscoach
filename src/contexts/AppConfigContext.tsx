@@ -20,8 +20,8 @@ export interface AppConfig {
 // 🚀 O SEGREDO DO CEO: Estes são os valores globais e inquebráveis.
 // O mundo inteiro vai ver e usar isto, não importa de onde acedam.
 const GLOBAL_CONFIG: AppConfig = {
-  affiliateUrl: "https://1waalh.life/?open=register#j4d2", // O teu link real cravado no código
-  promoCode: "WINBIG600", // O teu código real
+  affiliateUrl: "https://lkzq.cc/2ea7", // O teu link real cravado no código
+  promoCode: "MRI2026", // O teu código real
   geminiApiKey: import.meta.env.VITE_GEMINI_API_KEY || "", // Puxa direto da Vercel
   sportsApiKey: import.meta.env.VITE_API_FOOTBALL_KEY || "", // Puxa direto da Vercel
   newsApiKey: import.meta.env.VITE_GNEWS_API_KEY || "", // Puxa direto da Vercel
