@@ -1,4 +1,4 @@
-import { Clock, TrendingUp } from "lucide-react";
+import { Clock, TrendingUp, ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import SocialShareButtons from "@/components/shared/SocialShareButtons";
 
@@ -7,46 +7,68 @@ interface NewsCardProps {
   excerpt: string;
   category: string;
   time: string;
-  image?: string;
+  image?: string; // Agora vamos usar esta prop para as imagens reais da GNews
   trending?: boolean;
   large?: boolean;
 }
 
-export default function NewsCard({ title, excerpt, category, time, trending, large }: NewsCardProps) {
+export default function NewsCard({ title, excerpt, category, time, image, trending, large }: NewsCardProps) {
   return (
     <motion.article
-      whileHover={{ y: -2 }}
-      className={`group cursor-pointer overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-lg ${
+      whileHover={{ y: -4, shadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
+      className={`group cursor-pointer overflow-hidden rounded-2xl border border-border bg-surface transition-all duration-300 ${
         large ? "md:col-span-2 md:row-span-2" : ""
       }`}
     >
-      <div className={`relative bg-gradient-to-br from-secondary/20 to-primary/10 ${large ? "h-48 md:h-64" : "h-32"}`}>
-        {trending && (
-          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1">
-            <TrendingUp size={12} className="text-primary-foreground" />
-            <span className="text-[10px] font-black uppercase text-primary-foreground">Trending</span>
+      <div className={`relative overflow-hidden ${large ? "h-56 md:h-80" : "h-40"}`}>
+        {/* Imagem Real da Notícia ou Fallback se não houver */}
+        {image ? (
+          <img 
+            src={image} 
+            alt={title} 
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+            <ImageIcon className="text-slate-700 h-10 w-10" />
           </div>
         )}
-        <div className="absolute bottom-3 left-3 rounded-md bg-foreground/80 px-2 py-0.5">
-          <span className="text-[10px] font-bold uppercase text-surface">{category}</span>
+
+        {/* Overlay para melhorar leitura das tags */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
+
+        {trending && (
+          <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 shadow-lg shadow-emerald-500/20">
+            <TrendingUp size={10} className="text-white" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-white">Trending</span>
+          </div>
+        )}
+        
+        <div className="absolute bottom-4 left-4 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 px-2.5 py-1">
+          <span className="text-[9px] font-black uppercase tracking-widest text-white">{category}</span>
         </div>
       </div>
 
-      <div className="p-4">
-        <h3 className={`font-bold text-foreground group-hover:text-primary transition-colors leading-tight ${
-          large ? "text-lg md:text-xl" : "text-sm"
+      <div className="p-5">
+        <h3 className={`font-black text-foreground group-hover:text-emerald-500 transition-colors leading-tight uppercase tracking-tighter ${
+          large ? "text-xl md:text-2xl" : "text-sm"
         }`}>
           {title}
         </h3>
-        <p className={`mt-1.5 text-muted-foreground leading-relaxed ${large ? "text-sm" : "text-xs"} line-clamp-2`}>
+        
+        <p className={`mt-2 text-muted-foreground font-medium leading-relaxed ${large ? "text-sm" : "text-[11px]"} line-clamp-2 opacity-80 italic`}>
           {excerpt}
         </p>
-        <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Clock size={12} />
-            <span className="text-[10px] font-semibold">{time}</span>
+
+        <div className="mt-5 flex items-center justify-between border-t border-border pt-4">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock size={12} className="text-emerald-500" />
+            <span className="text-[10px] font-black uppercase tracking-widest">{time}</span>
           </div>
-          <SocialShareButtons title={title} />
+          <div className="flex items-center gap-3">
+             <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-0 group-hover:opacity-100 transition-opacity">Partilhar</span>
+             <SocialShareButtons title={title} />
+          </div>
         </div>
       </div>
     </motion.article>
