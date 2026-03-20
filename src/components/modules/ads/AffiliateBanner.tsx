@@ -1,4 +1,4 @@
-import { Zap, ExternalLink } from "lucide-react";
+import { Zap, ExternalLink, Gift, Trophy } from "lucide-react";
 import { useAppConfig } from "@/contexts/AppConfigContext";
 
 interface AffiliateBannerProps {
@@ -8,33 +8,46 @@ interface AffiliateBannerProps {
 export default function AffiliateBanner({ variant = "inline" }: AffiliateBannerProps) {
   const { config } = useAppConfig();
 
+  // Se o admin desligar os banners, respeitamos a decisão
   if (!config.showAffiliateBanners) return null;
 
   if (variant === "hero") {
     return (
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 via-surface to-warning/10 p-6">
-        <div className="flex flex-col items-center gap-4 text-center md:flex-row md:text-left">
-          <div className="rounded-xl bg-primary p-3">
-            <Zap size={28} className="text-primary-foreground" />
+      <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-slate-900 p-8 shadow-2xl shadow-primary/20 group">
+        {/* Efeito de brilho de fundo */}
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl transition-all group-hover:bg-primary/30" />
+        
+        <div className="relative z-10 flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-emerald-500 shadow-lg shadow-primary/40">
+            <Trophy size={32} className="text-white animate-bounce" />
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-black text-foreground">
-              Get a <span className="text-primary">600% Crypto Bonus</span> on Your First Deposit
+          
+          <div className="flex-1 space-y-2">
+            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 border border-emerald-500/20">
+              <Zap size={12} className="text-emerald-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Oferta Exclusiva 1win</span>
+            </div>
+            <h3 className="text-2xl font-black text-white uppercase tracking-tighter leading-none">
+              Bónus de Boas-Vindas de <span className="text-emerald-500 text-3xl">500%</span>
             </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Join 1win and boost every prediction with the best odds in the market.
+            <p className="text-sm font-medium text-slate-400 max-w-md">
+              Aumente as suas odds e receba bónus em Crypto no seu primeiro depósito com a nossa parceria oficial.
             </p>
           </div>
-          <div className="flex flex-col items-center gap-2">
+
+          <div className="flex w-full flex-col items-center gap-3 md:w-auto">
             <a
               href={config.affiliateUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-transform active:scale-95"
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-emerald-500 px-8 py-4 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-500/20 transition-all hover:bg-emerald-400 active:scale-95 md:w-auto"
             >
-              Claim Bonus <ExternalLink size={14} />
+              Reclamar Bónus <ExternalLink size={14} />
             </a>
-            <span className="font-mono-brand text-xs font-bold text-primary">Code: {config.promoCode}</span>
+            <div className="flex items-center gap-2">
+               <span className="text-[10px] font-bold text-slate-500 uppercase">Use o Código:</span>
+               <span className="font-mono text-sm font-black text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">{config.promoCode}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -44,12 +57,25 @@ export default function AffiliateBanner({ variant = "inline" }: AffiliateBannerP
   if (!config.showInlineAds) return null;
 
   return (
-    <div className="flex items-center justify-between rounded-lg border border-dashed border-primary/20 bg-primary/5 px-4 py-3">
-      <div className="flex items-center gap-2">
-        <Zap size={14} className="text-primary" />
-        <span className="text-xs font-bold text-foreground">600% Bonus on 1win</span>
+    <a 
+      href={config.affiliateUrl}
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="flex items-center justify-between rounded-xl border border-dashed border-emerald-500/40 bg-emerald-500/5 px-5 py-4 transition-all hover:bg-emerald-500/10 hover:border-emerald-500"
+    >
+      <div className="flex items-center gap-3">
+        <div className="rounded-lg bg-emerald-500 p-1.5">
+          <Gift size={16} className="text-white" />
+        </div>
+        <div>
+           <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Bonus VIP Ativado</p>
+           <p className="text-xs font-bold text-foreground">Deposite e ganhe 500% na 1win</p>
+        </div>
       </div>
-      <span className="font-mono-brand text-[10px] font-bold text-primary">{config.promoCode}</span>
-    </div>
+      <div className="flex items-center gap-3">
+        <span className="hidden font-mono text-[11px] font-black text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded sm:block">CODE: {config.promoCode}</span>
+        <ExternalLink size={14} className="text-muted-foreground" />
+      </div>
+    </a>
   );
 }
